@@ -4,10 +4,10 @@ import numpy as np
 from MDAnalysis.analysis.distances import distance_array
 
 def analyze_li_coordination(u, li_resname, frame_number, threshold=2.5):
-    # 定位所有Li原子（通过残基名）
+    # 找到所有Li原子（通过残基名）
     li_atoms = u.select_atoms(f'resname {li_resname}')
     if len(li_atoms) == 0:
-        print(f"警告：未找到名为 '{li_resname}' 的残基，请确认名称是否正确。")
+        print(f"警告：未找到名为 '{li_resname}' 的残基res，请确认名称是否正确。")
         return
 
     print(f"轨迹中Li原子数量: {len(li_atoms)}")
@@ -18,7 +18,7 @@ def analyze_li_coordination(u, li_resname, frame_number, threshold=2.5):
     non_li_atoms = u.select_atoms(f'not resname {li_resname}')
     non_li_resids = np.unique(non_li_atoms.resids)
 
-    # 建立分子残基字典，key=残基号，value=AtomGroup
+    # 建立分子残基库，key=残基号，value=AtomGroup
     res_groups = {}
     for resid in non_li_resids:
         res_groups[resid] = non_li_atoms.select_atoms(f'resid {resid}')
@@ -59,7 +59,7 @@ def analyze_li_coordination(u, li_resname, frame_number, threshold=2.5):
 
 if __name__ == "__main__":
     print("=== 所有 Li 的配位分析 ===")
-    li_resname = input("请输入Li的残基名（例如 Li）：").strip()
+    li_resname = input("请输入Li的残基res名（例如 Li）：").strip()
     frame_number = int(input("请输入要分析的帧编号: ").strip())
     threshold = input("请输入距离阈值（单位 Å，默认 2.5）: ").strip()
     if threshold == '':
@@ -67,9 +67,10 @@ if __name__ == "__main__":
     else:
         threshold = float(threshold)
 
-    # 你的文件名
+    # 要输入的文件名
     topology_file = 'eq2.gro'
     trajectory_file = 'eq2_fixed_10-20ns.xtc'
 
     u = mda.Universe(topology_file, trajectory_file)
     analyze_li_coordination(u, li_resname, frame_number, threshold)
+
